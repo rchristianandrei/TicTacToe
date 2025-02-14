@@ -1,3 +1,4 @@
+import { fsync } from "fs";
 import { User } from "../database/user";
 import { hash } from "../services/hashService";
 
@@ -19,4 +20,8 @@ export async function checkUsername(username: string) {
   return existing != null;
 }
 
-export default { register, checkUsername };
+export async function findUserById(id: string) {
+  return await User.findById(id);
+}
+
+export default { register, checkUsername, findUserById };

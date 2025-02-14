@@ -12,14 +12,20 @@
   "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.0",
+    "cors": "^2.8.5",
     "express": "^4.21.2",
-    "mongoose": "^8.10.0"
+    "mongoose": "^8.10.0",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^22.13.4",
+    "@types/passport": "^1.0.17",
+    "@types/passport-jwt": "^4.0.1",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
