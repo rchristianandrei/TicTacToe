@@ -1,12 +1,16 @@
 import { User } from "../database/user";
+import { hash } from "../services/hashService";
 
 export async function register(model: {
   username: string;
   displayName: string;
   password: string;
 }) {
-  const newUser = new User(model);
-  newUser.username = newUser.username.toLowerCase();
+  const newUser = new User({
+    username: model.username.toLowerCase(),
+    displayName: model.displayName,
+    password: await hash(model.password),
+  });
   await newUser.save();
 }
 
