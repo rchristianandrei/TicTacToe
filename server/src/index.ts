@@ -4,11 +4,10 @@ import passport from "passport";
 import mongoose from "mongoose";
 import dotnet from "dotenv";
 
-import authController from "./controllers/authController";
-import userController from "./controllers/userController";
-
 import { authGuard } from "./middlewares/authGuard";
 import { User } from "./database/user";
+
+import routes from "./routes";
 
 import "./auth/jwt-strategy";
 
@@ -25,8 +24,7 @@ app.use(
   })
 );
 
-app.use(authController.ROUTE, authController.router);
-app.use(userController.ROUTE, userController.router);
+app.use(routes);
 
 app.get("/", authGuard(), (req, res) => {
   const userObj = new User(req.user);
