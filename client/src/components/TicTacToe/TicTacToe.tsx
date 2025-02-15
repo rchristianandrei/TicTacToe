@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import { removeUser } from "../../services/sessionStorageServices"
 
 export default function TicTacToe(){
 
@@ -19,7 +20,7 @@ export default function TicTacToe(){
                         </li>   
                         <li className="list-none my-2">
                             <button onClick={() => {
-                                console.log("Logout")
+                                removeUser()
                                 navigate("/login")
                             }} className="bg-[#FFF] hover:bg-[#BBB] border border-[#FFF] hover:border-[#000] cursor-pointer p-5 rounded-lg">
                                 Logout

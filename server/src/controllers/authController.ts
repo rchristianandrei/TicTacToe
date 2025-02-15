@@ -15,12 +15,12 @@ router.post("/login", async (req, res) => {
   const password: string = req.body.password;
 
   if (!username) {
-    res.status(400).send({ message: "username can't be blank" });
+    res.status(400).send({ message: "Username can't be blank" });
     return;
   }
 
   if (!password) {
-    res.status(400).send({ message: "password can't be blank" });
+    res.status(400).send({ message: "Password can't be blank" });
     return;
   }
 
@@ -28,14 +28,14 @@ router.post("/login", async (req, res) => {
     const user = await userRepo.findUserByUsername(username);
 
     if (!user) {
-      res.status(404).send({ message: "user is not available" });
+      res.status(404).send({ message: "Invalid Credentials" });
       return;
     }
 
     const match = await hashService.compare(password, user.password);
 
     if (!match) {
-      res.status(404).send({ message: "user is not available" });
+      res.status(404).send({ message: "Invalid Credentials" });
       return;
     }
 
