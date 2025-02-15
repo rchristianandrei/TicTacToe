@@ -1,7 +1,7 @@
 import { Router } from "express";
 import userRepo from "../repo/userRepo";
 
-export const ROUTE = "/api/auth";
+export const ROUTE = "/api/user";
 export const router = Router();
 
 router.post("/register", async (req, res) => {

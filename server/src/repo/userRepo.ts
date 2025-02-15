@@ -24,4 +24,8 @@ export async function findUserById(id: string) {
   return await User.findById(id);
 }
 
-export default { register, checkUsername, findUserById };
+export async function findUserByUsername(username: string) {
+  return await User.findOne({ username: username.toLowerCase() });
+}
+
+export default { register, checkUsername, findUserById, findUserByUsername };
