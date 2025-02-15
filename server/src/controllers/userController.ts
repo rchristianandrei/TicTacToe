@@ -11,23 +11,23 @@ router.post("/register", async (req, res) => {
 
   try {
     if (!username) {
-      res.status(400).send({ message: "username cannot be blank" });
+      res.status(400).send({ message: "Username can't be blank" });
       return;
     }
 
     const existing = await userRepo.checkUsername(username);
     if (existing) {
-      res.status(400).send({ message: "username is not available" });
+      res.status(400).send({ message: "Username is not available" });
       return;
     }
 
     if (!displayName) {
-      res.status(400).send({ message: "display name cannot be blank" });
+      res.status(400).send({ message: "Display name can't be blank" });
       return;
     }
 
     if (!password) {
-      res.status(400).send({ message: "password cannot be blank" });
+      res.status(400).send({ message: "Password can't be blank" });
       return;
     }
 
@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
       password: password,
     });
 
-    res.status(200).send({ message: "succcessfullt registered user" });
+    res.status(200).send({ message: "Succcessfully registered user" });
   } catch (e: any) {
     res.sendStatus(500);
   }

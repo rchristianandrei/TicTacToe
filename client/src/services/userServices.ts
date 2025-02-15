@@ -1,16 +1,19 @@
-import { setUser } from "./sessionStorageServices";
+const HOST = `${import.meta.env.VITE_API_ENDPOINT}/user`;
 
-const HOST = `${import.meta.env.VITE_API_ENDPOINT}/auth`;
-
-export async function login(username: string, password: string) {
+export async function register(
+  username: string,
+  displayName: string,
+  password: string
+) {
   try {
-    const response = await fetch(`${HOST}/login`, {
+    const response = await fetch(`${HOST}/register`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         username: username,
+        displayName: displayName,
         password: password,
       }),
     });
@@ -21,8 +24,6 @@ export async function login(username: string, password: string) {
     if (response.status < 200 || response.status >= 300) {
       throw Error(data.message);
     }
-
-    setUser(data);
   } catch (e) {
     throw e;
   }

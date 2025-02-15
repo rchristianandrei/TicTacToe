@@ -54,7 +54,6 @@ export default function Login(){
                     </button>
                 </form>
                 <button onClick={() => {
-                    console.log("Register")
                     navigate("/register")
                 }} className="bg-[#FFF] hover:bg-[#BBB] border border-[#FFF] hover:border-[#000] cursor-pointer mt-5 p-5 rounded-lg">
                     Register
