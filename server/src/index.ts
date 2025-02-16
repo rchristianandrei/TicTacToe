@@ -44,3 +44,5 @@ mongoose
   .catch((reason) => {
     console.log(reason);
   });
+
+import "./ws";
