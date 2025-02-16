@@ -10,9 +10,9 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Suspense fallback={(<Loading></Loading>)}>
+      <Suspense fallback={<Loading></Loading>}>
         <Routes>
-          <Route path="/" element={<TicTacToe></TicTacToe>}></Route>
+          <Route path="/*" element={<TicTacToe></TicTacToe>}></Route>
           <Route path="/login" element={<Login></Login>}></Route>
           <Route path="/register" element={<Register></Register>}></Route>
         </Routes>
