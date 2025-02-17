@@ -1,4 +1,3 @@
-import { fsync } from "fs";
 import { User } from "../database/user";
 import { hash } from "../services/hashService";
 

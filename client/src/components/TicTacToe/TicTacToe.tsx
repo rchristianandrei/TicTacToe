@@ -11,16 +11,9 @@ import JoinLobby from "./components/JoinLobby/JoinLobby"
 export default function TicTacToe(){
 
     useEffect(() => {
-        function subcribe(e: MessageEvent){
-            const data = JSON.parse(e.data)
-            console.log(data)
-        }
-
         ws.connectToWSS()
-        ws.subscribeToMessages(subcribe)
 
         return () => {
-            ws.unsubscribeToMessages(subcribe)
             ws.closeWS()
         }
     }, [])

@@ -1,14 +1,35 @@
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { sendMessage, subscribeToMessages, unsubscribeToMessages } from "../../../../services/wsServices"
 
 export default function CreateLobby(){
 
     const navigate = useNavigate()
 
+    const [roomNumber, setRoomNumber] = useState("●●●●●●")
+
+    useEffect(() => {
+        function createLobby(data : any){
+            if(data.type !== "createdLobby") return;
+
+            setRoomNumber(data.roomNumber)
+        }
+
+        sendMessage({type: "createLobby"})
+        subscribeToMessages(createLobby)
+        console.log("sub")
+
+        return () => {
+            unsubscribeToMessages(createLobby)
+            console.log("unsub")
+        }
+    }, [])
+
     return(
         <main className="flex h-screen justify-center items-center">
             <div className="border-solid border-black border p-10 text-center rounded-lg">
                 <h1 className="text-6xl">Lobby #</h1>
-                <h2 className="text-4xl">123456</h2>
+                <h2 className="text-4xl">{roomNumber}</h2>
                 <hr className="my-3" />
                 <h3 className="text-2xl">Opponent</h3>
                 <h4 className="text-xl">None</h4>
@@ -16,7 +37,6 @@ export default function CreateLobby(){
                     <ul className="flex flex-col ">
                         <li className="list-none my-2">
                             <button onClick={() => {
-                                console.log("start")
                             }} className="bg-blue-600 hover:bg-blue-300 border cursor-pointer p-5 rounded-lg w-50 text-[whitesmoke] hover:text-[black] text-lg">
                                 Start
                             </button>
