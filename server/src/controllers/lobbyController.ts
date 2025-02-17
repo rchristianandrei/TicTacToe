@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authGuard } from "../middlewares/authGuard";
 import lobbyRepo from "../repo/lobbyRepo";
 import userRepo from "../repo/userRepo";
+import { users } from "../ws";
 
 export const ROUTE = "/api/lobby";
 export const router = Router();
@@ -20,7 +21,17 @@ router.post("/create", authGuard(), async (req, res) => {
       );
     }
 
-    res.status(200).send({ roomNumber: lobby.roomNumber });
+    let opponentName = "";
+    if (lobby.challenger) {
+      const opponent = await userRepo.findUserById(
+        lobby.challenger?.toString()
+      );
+      if (opponent) opponentName = opponent.displayName;
+    }
+
+    res
+      .status(200)
+      .send({ roomNumber: lobby.roomNumber, opponentName: opponentName });
   } catch (e) {
     console.log(e);
     res.status(500).send({ message: "Unable to create / retrieve lobby" });
@@ -58,6 +69,13 @@ router.put("/join", authGuard(), async (req, res) => {
     if (!opponent) {
       res.status(404).send({ message: "Opponent not found" });
       return;
+    }
+
+    const hostWS = users.get(opponent.id);
+    if (hostWS) {
+      hostWS.send(
+        JSON.stringify({ type: "joinLobby", opponent: user.displayName })
+      );
     }
 
     res.status(200).send({ opponent: opponent?.displayName });

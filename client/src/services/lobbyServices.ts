@@ -2,7 +2,7 @@ import { getUser } from "./sessionStorageServices";
 
 const HOST = `${import.meta.env.VITE_API_ENDPOINT}/lobby`;
 
-export async function createLobby() {
+export async function createLobby(signal: AbortSignal) {
   try {
     const user = getUser();
 
@@ -14,6 +14,7 @@ export async function createLobby() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user.token}`,
       },
+      signal: signal,
     });
 
     const data = await response.json();
@@ -23,11 +24,40 @@ export async function createLobby() {
       throw Error(data.message);
     }
 
-    const returnData: { roomNumber: string } = data;
+    const returnData: { roomNumber: string; opponentName: string } = data;
     return returnData;
   } catch (e) {
     throw e;
   }
 }
 
-export default { createLobby };
+export async function joinLobby(roomNumber: string) {
+  try {
+    const user = getUser();
+
+    if (!user) return null;
+
+    const response = await fetch(`${HOST}/join`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: JSON.stringify({ roomNumber: roomNumber }),
+    });
+
+    const data = await response.json();
+
+    // if not OK
+    if (response.status < 200 || response.status >= 300) {
+      throw Error(data.message);
+    }
+
+    const returnData: { opponent: string } = data;
+    return returnData;
+  } catch (e) {
+    throw e;
+  }
+}
+
+export default { createLobby, joinLobby };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { sendMessage, subscribeToMessages, unsubscribeToMessages } from "../../../../services/wsServices"
+import { subscribeToMessages, unsubscribeToMessages } from "../../../../services/wsServices"
 import lobbyServices from "../../../../services/lobbyServices"
 
 export default function CreateLobby(){
@@ -8,23 +8,38 @@ export default function CreateLobby(){
     const navigate = useNavigate()
 
     const [roomNumber, setRoomNumber] = useState("●●●●●●")
+    const [opponent, setOpponent] = useState("None")
 
     useEffect(() => {
-        function joinedLobby(data : any){
-            // if(data.type !== "createdLobby") return;
+        let controller: AbortController | null = null;
 
-            // setRoomNumber(data.roomNumber)
+        function loadCreateLobby (){
+            controller = new AbortController();
+
+            lobbyServices.createLobby(controller.signal)
+            .then(res => {
+                if(!res) return
+                setRoomNumber(res.roomNumber)
+    
+                if(res.opponentName){
+                    setOpponent(res.opponentName)
+                }
+            })
+            .catch(reason => console.log(reason))
+            .finally(() => controller = null)
         }
 
-        lobbyServices.createLobby().then(res => {
-            if(!res) return
-            setRoomNumber(res.roomNumber)
-        })
-        .catch(reason => console.log(reason))
+        function joinedLobby(data : any){
+            if(data.type !== "joinLobby") return
+            loadCreateLobby()
+        }
+
+        loadCreateLobby()
         subscribeToMessages(joinedLobby)
 
         return () => {
             unsubscribeToMessages(joinedLobby)
+            controller?.abort("component unmount")
         }
     }, [])
 
@@ -35,7 +50,7 @@ export default function CreateLobby(){
                 <h2 className="text-4xl">{roomNumber}</h2>
                 <hr className="my-3" />
                 <h3 className="text-2xl">Opponent</h3>
-                <h4 className="text-xl">None</h4>
+                <h4 className="text-xl">{opponent}</h4>
                 <nav className="mt-5">
                     <ul className="flex flex-col ">
                         <li className="list-none my-2">
