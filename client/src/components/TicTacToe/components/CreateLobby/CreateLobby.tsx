@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { sendMessage, subscribeToMessages, unsubscribeToMessages } from "../../../../services/wsServices"
+import lobbyServices from "../../../../services/lobbyServices"
 
 export default function CreateLobby(){
 
@@ -9,19 +10,21 @@ export default function CreateLobby(){
     const [roomNumber, setRoomNumber] = useState("●●●●●●")
 
     useEffect(() => {
-        function createLobby(data : any){
-            if(data.type !== "createdLobby") return;
+        function joinedLobby(data : any){
+            // if(data.type !== "createdLobby") return;
 
-            setRoomNumber(data.roomNumber)
+            // setRoomNumber(data.roomNumber)
         }
 
-        sendMessage({type: "createLobby"})
-        subscribeToMessages(createLobby)
-        console.log("sub")
+        lobbyServices.createLobby().then(res => {
+            if(!res) return
+            setRoomNumber(res.roomNumber)
+        })
+        .catch(reason => console.log(reason))
+        subscribeToMessages(joinedLobby)
 
         return () => {
-            unsubscribeToMessages(createLobby)
-            console.log("unsub")
+            unsubscribeToMessages(joinedLobby)
         }
     }, [])
 

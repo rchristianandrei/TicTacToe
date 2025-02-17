@@ -1,4 +1,4 @@
-import { Routes, Route} from "react-router-dom"
+import { Routes, Route, useNavigate} from "react-router-dom"
 import { useEffect } from "react"
 
 import ws from "../../services/wsServices"
@@ -7,11 +7,22 @@ import MainMenu from "./components/MainMenu/MainMenu"
 import Lobby from "./components/Lobby/Lobby"
 import CreateLobby from "./components/CreateLobby/CreateLobby"
 import JoinLobby from "./components/JoinLobby/JoinLobby"
+import { getUser } from "../../services/sessionStorageServices"
 
 export default function TicTacToe(){
 
+    const navigate = useNavigate()
+
     useEffect(() => {
-        ws.connectToWSS()
+
+        const user = getUser()
+
+        if(!user){
+            navigate("/login")
+            return
+        }
+
+        ws.connectToWSS(user.token)
 
         return () => {
             ws.closeWS()

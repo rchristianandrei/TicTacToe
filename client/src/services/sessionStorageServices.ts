@@ -6,9 +6,11 @@ export function setUser(obj: { displayName: string; token: string }) {
 }
 
 export function getUser() {
-  const data: { displayName: string; token: string } | null = JSON.parse(
-    sessionStorage.getItem(KEY) || ""
-  );
+  const raw = sessionStorage.getItem(KEY);
+
+  if (!raw) return null;
+
+  const data: { displayName: string; token: string } = JSON.parse(raw);
   return data;
 }
 
