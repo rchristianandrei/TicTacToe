@@ -44,7 +44,14 @@ router.put("/join", authGuard(), async (req, res) => {
       return;
     }
 
-    await lobbyRepo.joinLobby(user.id, roomNumber);
+    if (lobby.challenger) {
+      if (lobby.challenger?.toString() !== user.id.toString()) {
+        res.status(400).send({ message: "Lobby is full" });
+        return;
+      }
+    } else {
+      await lobbyRepo.joinLobby(user.id, roomNumber);
+    }
 
     const opponent = await userRepo.findUserById(lobby.owner.toString());
 
