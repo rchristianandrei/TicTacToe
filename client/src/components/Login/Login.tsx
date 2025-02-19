@@ -49,7 +49,7 @@ export default function Login(){
                         <input ref={passwordField} className="border p-2 rounded-lg" type="password" id="password" name="password"/>
                     </div>
                     {errorMessage && <div className="text-red-700">{errorMessage}</div>}
-                    <button className="bg-blue-600 hover:bg-blue-300 border cursor-pointer p-5 mt-5 rounded-lg text-[whitesmoke] hover:text-[black] text-lg w-100">
+                    <button className="bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] border cursor-pointer p-5 mt-5 rounded-lg text-[whitesmoke] hover:text-[black] text-lg w-100">
                         Jump in!
                     </button>
                 </form>

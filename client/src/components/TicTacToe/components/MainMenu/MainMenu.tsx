@@ -14,7 +14,7 @@ export default function MainMenu(){
                         <li className="list-none my-2">
                             <button onClick={() => {
                                 navigate("/lobby")
-                            }} className="bg-blue-600 hover:bg-blue-300 border cursor-pointer p-5 rounded-lg w-50 text-[whitesmoke] hover:text-[black] text-lg">
+                            }} className="bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] border cursor-pointer p-5 rounded-lg w-50 text-[whitesmoke] hover:text-[black] text-lg">
                                 Play
                             </button>
                         </li>   

@@ -3,3 +3,8 @@
 * {
   font-family: monospace;
 }
+
+:root {
+  --primary-color: var(--color-blue-600);
+  --primary-color-hover: var(--color-blue-300);
+}

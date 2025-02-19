@@ -73,7 +73,7 @@ export default function Register(){
                     </div>
                     {errorMessage && <div className="text-red-700">{errorMessage}</div>}
                     {showSuccessMessage && <div className="text-green-700">Successfully registered the user</div>}
-                    <button className="bg-blue-600 hover:bg-blue-300 border cursor-pointer p-5 mt-5 rounded-lg text-[whitesmoke] hover:text-[black] text-lg w-100">
+                    <button className="bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] border cursor-pointer p-5 mt-5 rounded-lg text-[whitesmoke] hover:text-[black] text-lg w-100">
                         Sign up?
                     </button>
                 </form>
