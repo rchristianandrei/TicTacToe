@@ -39,7 +39,6 @@ export default function CreateLobby(){
 
         return () => {
             unsubscribeToMessages(joinedLobby)
-            controller?.abort("component unmount")
         }
     }, [])
 
@@ -61,7 +60,13 @@ export default function CreateLobby(){
                         </li>     
                         <li className="list-none my-2">
                             <button onClick={() => {
-                                navigate("/lobby")
+                                lobbyServices.deleteLobby(roomNumber)
+                                .then(result => {
+                                    if(!result) return
+                                    navigate("/lobby")
+                                }).catch((reason) => {
+                                    console.log(reason)
+                                    return})
                             }} className="bg-[#FFF] hover:bg-[#BBB] border border-[#FFF] hover:border-[#000] cursor-pointer p-5 rounded-lg">
                                 Exit
                             </button>

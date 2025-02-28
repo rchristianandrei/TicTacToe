@@ -95,7 +95,7 @@ router.delete("/:roomNumber", authGuard(), async (req, res) => {
 
   try {
     await lobbyRepo.deleteLobby(roomNumber);
-    res.status(204).send({ message: "Successfully deleted the lobby" });
+    res.sendStatus(204);
   } catch (e) {
     console.log(e);
     res.status(500).send({ message: "Unable to delete the lobby" });

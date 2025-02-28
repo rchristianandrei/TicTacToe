@@ -60,4 +60,28 @@ export async function joinLobby(roomNumber: string) {
   }
 }
 
-export default { createLobby, joinLobby };
+export async function deleteLobby(roomNumber: string): Promise<boolean> {
+  try {
+    const user = getUser();
+
+    if (!user) return false;
+
+    const response = await fetch(`${HOST}/${roomNumber}`, {
+      method: "delete",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+
+    // if not OK
+    if (response.status < 200 || response.status >= 300) {
+      throw Error((await response.json()).message);
+    }
+    return true;
+  } catch (e) {
+    throw e;
+  }
+}
+
+export default { createLobby, joinLobby, deleteLobby };
