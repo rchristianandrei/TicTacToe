@@ -53,7 +53,7 @@ export async function joinLobby(roomNumber: string) {
       throw Error(data.message);
     }
 
-    const returnData: { opponent: string } = data;
+    const returnData: { opponent: string; roomNumber: string } = data;
     return returnData;
   } catch (e) {
     throw e;

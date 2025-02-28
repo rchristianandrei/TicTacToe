@@ -43,7 +43,13 @@ router.put("/join", authGuard(), async (req, res) => {
   const roomNumber = req.body.roomNumber;
 
   try {
-    const lobby = await lobbyRepo.getLobbyByRoomNumber(roomNumber);
+    // Check if user is already in a lobby
+    let lobby = await lobbyRepo.getLobbyByChallengerId(user.id.toString());
+
+    // Check if roomnumber is available
+    if (!lobby) {
+      lobby = await lobbyRepo.getLobbyByRoomNumber(roomNumber);
+    }
 
     if (!lobby) {
       res.status(404).send({ message: "Lobby not found" });
@@ -78,7 +84,9 @@ router.put("/join", authGuard(), async (req, res) => {
       );
     }
 
-    res.status(200).send({ opponent: opponent?.displayName });
+    res
+      .status(200)
+      .send({ opponent: opponent?.displayName, roomNumber: lobby.roomNumber });
   } catch (e) {
     console.log(e);
     res.status(500).send({ message: "Unable to join the lobby" });
@@ -94,6 +102,20 @@ router.delete("/:roomNumber", authGuard(), async (req, res) => {
   }
 
   try {
+    // Check if room exists
+    const lobby = await lobbyRepo.getLobbyByRoomNumber(roomNumber);
+
+    if (!lobby) {
+      res.status(400).send({ message: "Lobby does not exist" });
+      return;
+    }
+
+    // Check if there's an opponent
+    if (lobby.challenger) {
+      const ws = users.get(lobby.challenger.toString());
+      ws?.send(JSON.stringify({ type: "lobby closed" }));
+    }
+
     await lobbyRepo.deleteLobby(roomNumber);
     res.sendStatus(204);
   } catch (e) {

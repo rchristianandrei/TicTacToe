@@ -15,12 +15,12 @@ export default function CreateLobby(){
 
         function loadCreateLobby (){
             controller = new AbortController();
-
+            
             lobbyServices.createLobby(controller.signal)
             .then(res => {
                 if(!res) return
                 setRoomNumber(res.roomNumber)
-    
+                
                 if(res.opponentName){
                     setOpponent(res.opponentName)
                 }
@@ -38,6 +38,7 @@ export default function CreateLobby(){
         subscribeToMessages(joinedLobby)
 
         return () => {
+            controller?.abort()
             unsubscribeToMessages(joinedLobby)
         }
     }, [])
