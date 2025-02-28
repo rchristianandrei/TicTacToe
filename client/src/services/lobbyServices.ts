@@ -31,7 +31,7 @@ export async function createLobby(signal: AbortSignal) {
   }
 }
 
-export async function joinLobby(roomNumber: string) {
+export async function joinLobby(roomNumber: string, signal: AbortSignal) {
   try {
     const user = getUser();
 
@@ -44,6 +44,7 @@ export async function joinLobby(roomNumber: string) {
         Authorization: `Bearer ${user.token}`,
       },
       body: JSON.stringify({ roomNumber: roomNumber }),
+      signal: signal,
     });
 
     const data = await response.json();

@@ -20,26 +20,24 @@ export default function CreateLobby(){
             .then(res => {
                 if(!res) return
                 setRoomNumber(res.roomNumber)
-                
-                if(res.opponentName){
-                    setOpponent(res.opponentName)
-                }
+                setOpponent(res.opponentName ? res.opponentName: "None")
             })
             .catch(reason => console.log(reason))
             .finally(() => controller = null)
         }
 
-        function joinedLobby(data : any){
-            if(data.type !== "joinLobby") return
+        function wsMessages(data : any){
+            const types = ["joinLobby", "opponent left"]
+            if(!types.includes(data.type)) return
             loadCreateLobby()
         }
 
         loadCreateLobby()
-        subscribeToMessages(joinedLobby)
+        subscribeToMessages(wsMessages)
 
         return () => {
             controller?.abort()
-            unsubscribeToMessages(joinedLobby)
+            unsubscribeToMessages(wsMessages)
         }
     }, [])
 

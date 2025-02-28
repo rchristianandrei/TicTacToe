@@ -7,6 +7,7 @@ export default function JoinLobby(){
 
     const navigate = useNavigate()
 
+    let controller = useRef<AbortController | null>(null)
     const roomNumberField = useRef<HTMLInputElement>(null)
 
     const [roomNumber, setRoomNumber] = useState("")
@@ -26,17 +27,15 @@ export default function JoinLobby(){
         subscribeToMessages(joinLobby)
 
         return () => {
+            controller.current?.abort()
             unsubscribeToMessages(joinLobby)
         }
     }, [])
     
     function onJoinLobby(onMount: boolean){
-        // if(!roomNumber){
-        //     setErrorMessage("Unable to join")
-        //     return
-        // }
+        controller.current = new AbortController();
 
-        lobbyServices.joinLobby(roomNumber).then(res => {
+        lobbyServices.joinLobby(roomNumber, controller.current.signal).then(res => {
             if(!res) return
             setOpponent(res.opponent)
             setRoomNumber(res.roomNumber)
@@ -66,6 +65,7 @@ export default function JoinLobby(){
                         </li>     
                         <li className="list-none my-2">
                             <button onClick={() => {
+                                if(roomNumber) lobbyServices.deleteLobby(roomNumber)
                                 navigate("/lobby")
                             }} className="bg-[#FFF] hover:bg-[#BBB] border border-[#FFF] hover:border-[#000] cursor-pointer p-5 rounded-lg">
                                 Exit

@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { authGuard } from "../middlewares/authGuard";
-import lobbyRepo from "../repo/lobbyRepo";
+import lobbyRepo, { exitLobby } from "../repo/lobbyRepo";
 import userRepo from "../repo/userRepo";
 import { users } from "../ws";
+import user from "../database/user";
 
 export const ROUTE = "/api/lobby";
 export const router = Router();
@@ -94,6 +95,8 @@ router.put("/join", authGuard(), async (req, res) => {
 });
 
 router.delete("/:roomNumber", authGuard(), async (req, res) => {
+  const user: any = req.user;
+  const userId = user.id.toString();
   const roomNumber = req.params.roomNumber;
 
   if (!roomNumber) {
@@ -110,13 +113,21 @@ router.delete("/:roomNumber", authGuard(), async (req, res) => {
       return;
     }
 
-    // Check if there's an opponent
-    if (lobby.challenger) {
-      const ws = users.get(lobby.challenger.toString());
-      ws?.send(JSON.stringify({ type: "lobby closed" }));
+    // Check if you're the host
+    if (lobby.owner.toString() === userId) {
+      await lobbyRepo.exitLobby(roomNumber, userId);
+
+      if (lobby.challenger) {
+        const ws = users.get(lobby.challenger.toString());
+        ws?.send(JSON.stringify({ type: "lobby closed" }));
+      }
+    } else if (lobby.challenger && lobby.challenger.toString() === userId) {
+      // Check if you're the challenger
+      await lobbyRepo.exitLobby(roomNumber, userId);
+      const ws = users.get(lobby.owner.toString());
+      ws?.send(JSON.stringify({ type: "opponent left" }));
     }
 
-    await lobbyRepo.deleteLobby(roomNumber);
     res.sendStatus(204);
   } catch (e) {
     console.log(e);

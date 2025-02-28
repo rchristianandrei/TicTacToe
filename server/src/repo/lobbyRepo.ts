@@ -30,8 +30,17 @@ export async function joinLobby(
   await Lobby.updateOne({ roomNumber: roomNumber }, { challenger: challenger });
 }
 
-export async function deleteLobby(roomNumber: string) {
-  await Lobby.deleteOne({ roomNumber: roomNumber });
+export async function exitLobby(roomNumber: string, userId: string) {
+  const lobby = await getLobbyByRoomNumber(roomNumber);
+
+  if (!lobby) return;
+
+  if (lobby.owner.toString() === userId) {
+    await Lobby.deleteOne({ roomNumber: roomNumber });
+  } else if (lobby.challenger && lobby.challenger.toString() === userId) {
+    lobby.challenger = null;
+    await Lobby.updateOne(lobby);
+  }
 }
 
 export default {
@@ -40,5 +49,5 @@ export default {
   getLobbyByRoomNumber,
   createLobby,
   joinLobby,
-  deleteLobby,
+  exitLobby,
 };
