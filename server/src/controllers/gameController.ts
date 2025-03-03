@@ -94,17 +94,75 @@ router.get("/", authGuard(), async (req, res) => {
       return;
     }
 
+    const data = game.matrix.map((v) => {
+      if (v) {
+        return v.toString() === game.owner._id.toString() ? "X" : "O";
+      } else {
+        return null;
+      }
+    });
+
     res.status(200).send({
       enemyName: enemy.displayName,
       yourTurn: game.turn.toString() === userId,
       round: game.round,
-      data: game.matrix,
+      data: data,
     });
   } catch (e) {
     console.log(e);
     res
       .status(500)
       .send({ message: "Something went wrong please try again later" });
+  }
+});
+
+router.patch("/", authGuard(), async (req, res) => {
+  const userId = (req.user as any).id.toString();
+  const index: number = req.body.index;
+
+  if (index > 8 || index < 0) {
+    res.status(400).send({ message: "Index out of range" });
+    return;
+  }
+
+  try {
+    const game = await gameRepo.getGame(userId);
+
+    if (!game) {
+      res.status(404).send({ message: "Game not found" });
+      return;
+    }
+
+    // Is a player
+    if (
+      game.owner.toString() !== userId &&
+      game.challenger.toString() !== userId
+    ) {
+      res.sendStatus(401);
+      return;
+    }
+
+    // Current Turn
+    if (game.turn.toString() !== userId) {
+      res.status(400).send({ message: "Not yet your turn" });
+      return;
+    }
+
+    await gameRepo.updateGame(game.id, userId, index);
+
+    users
+      .get(game.owner.toString())
+      ?.send(JSON.stringify({ type: "game updated" }));
+    users
+      .get(game.challenger.toString())
+      ?.send(JSON.stringify({ type: "game updated" }));
+
+    res.status(200).send({ message: "Game updated" });
+  } catch (e) {
+    console.error(e);
+    res
+      .status(500)
+      .send({ message: "Something went wrong, please try again later" });
   }
 });
 

@@ -61,4 +61,33 @@ export async function getData(signal: AbortSignal) {
   }
 }
 
-export default { start, getData };
+export async function updateGame(index: number) {
+  try {
+    const user = getUser();
+
+    if (!user) return null;
+
+    const response = await fetch(`${HOST}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: JSON.stringify({ index: index }),
+    });
+
+    const data = await response.json();
+
+    // if not OK
+    if (response.status < 200 || response.status >= 300) {
+      throw Error(data.message);
+    }
+
+    const returnData: any = data;
+    return returnData;
+  } catch (e) {
+    throw e;
+  }
+}
+
+export default { start, getData, updateGame };

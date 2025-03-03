@@ -1,31 +1,40 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import GridPlate from "./GridPlate"
 import gameServices from "../../../../services/gameServices";
+import { subscribeToMessages, unsubscribeToMessages } from "../../../../services/wsServices";
 
 export default function CreateLobby(){
 
+    const abortCtrl = useRef<AbortController | null>(null)
+
     const [enemyName, setEnemyName] = useState("[Challenger]")
     const [yourTurn, setYourTurn] = useState(true)
-    const [matrix, setMatrix] = useState([["","",""], ["","",""], ["","",""]])
+    const [matrix, setMatrix] = useState<string[]>([])
+
+    function getData(){
+        abortCtrl.current = new AbortController();
+        gameServices.getData(abortCtrl.current.signal)
+        .then(data => {
+            setEnemyName(data.enemyName)
+            setYourTurn(data.yourTurn)
+            setMatrix(data.data)
+        })
+        .catch(reason => console.error(reason))
+    }
 
     useEffect(() => {
-        let controller: AbortController | null = null;
-        
-        function getData(){
-            controller = new AbortController();
-            gameServices.getData(controller.signal)
-            .then(data => {
-                setEnemyName(data.enemyName)
-                setYourTurn(data.yourTurn)
-                setMatrix(data.data)
-            })
-            .catch(reason => console.error(reason))
+        function subtoMessage(data: any){
+            if(data.type === "game updated"){
+                getData()
+            }
         }
-
+        
         getData();
+        subscribeToMessages(subtoMessage)
 
         return () => {
-            controller?.abort("");
+            abortCtrl.current?.abort();
+            unsubscribeToMessages(subtoMessage)
         }
     }, [])
 
@@ -40,13 +49,11 @@ export default function CreateLobby(){
 
         <main className={`${yourTurn && "bg-green-500"} h-[100vh] flex justify-center items-center`} >
             <div className="grid grid-cols-3 grid-rows-3 gap-5 w-[500px] h-[500px] max-w-[500px] max-h-[500px]">
-                {matrix.map((v1, i1) => {
-                    const basekey = 3 * i1
-                    return v1.map((v2, i2) => {
-                        return <GridPlate key={basekey + i2} yourTurn={yourTurn} value={v2} onClick={() => {
-                            setMatrix(matrix.map((a1, b1) => b1 !== i1 ? a1 : a1.map((a2, b2) => b2 === i2 ? "x" : a2)))
+                {matrix.map((v, i) => {
+                        return <GridPlate key={i} yourTurn={yourTurn} value={v} onClick={() => {
+                            gameServices.updateGame(i)
+                            .catch(reason => console.error(reason))
                         }}></GridPlate>
-                    })
                 })}
             </div>
         </main>

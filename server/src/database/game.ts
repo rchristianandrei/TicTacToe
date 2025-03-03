@@ -6,7 +6,7 @@ const GameScheme = new Schema({
   challenger: { type: Schema.Types.ObjectId, required: true },
   turn: { type: Schema.Types.ObjectId, required: true },
   round: { type: Number, required: true },
-  matrix: { type: [[Schema.Types.ObjectId]], required: true },
+  matrix: { type: [Schema.Types.ObjectId], required: true },
 });
 
 export const modelName = "game";
