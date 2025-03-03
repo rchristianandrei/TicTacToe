@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { subscribeToMessages, unsubscribeToMessages } from "../../../../services/wsServices"
 import lobbyServices from "../../../../services/lobbyServices"
+import gameServices from "../../../../services/gameServices"
 
 export default function CreateLobby(){
 
@@ -9,6 +10,7 @@ export default function CreateLobby(){
 
     const [roomNumber, setRoomNumber] = useState("●●●●●●")
     const [opponent, setOpponent] = useState("None")
+    const [errorMessage, setErrorMessage] = useState("")
 
     useEffect(() => {
         let controller: AbortController | null = null;
@@ -52,7 +54,11 @@ export default function CreateLobby(){
                 <nav className="mt-5">
                     <ul className="flex flex-col ">
                         <li className="list-none my-2">
+                            {errorMessage && <div className="text-red-700 max-w-[200px]">{errorMessage}</div>}
                             <button onClick={() => {
+                                gameServices.start(roomNumber)
+                                .then(res => navigate("/game"))
+                                .catch(reason => setErrorMessage(reason.message))
                             }} className="bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] border cursor-pointer p-5 rounded-lg w-50 text-[whitesmoke] hover:text-[black] text-lg">
                                 Start
                             </button>

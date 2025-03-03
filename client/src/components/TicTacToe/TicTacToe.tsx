@@ -8,6 +8,7 @@ import Lobby from "./components/Lobby/Lobby"
 import CreateLobby from "./components/CreateLobby/CreateLobby"
 import JoinLobby from "./components/JoinLobby/JoinLobby"
 import { getUser } from "../../services/sessionStorageServices"
+import Game from "./components/Game/Game"
 
 export default function TicTacToe(){
 
@@ -35,6 +36,7 @@ export default function TicTacToe(){
             <Route path="/lobby" element={<Lobby></Lobby>}></Route>
             <Route path="/createlobby" element={<CreateLobby></CreateLobby>}></Route>
             <Route path="/joinlobby" element={<JoinLobby></JoinLobby>}></Route>
+            <Route path="/game" element={<Game></Game>}></Route>
         </Routes>
     )
 }
