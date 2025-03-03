@@ -17,8 +17,12 @@ export async function createGame(
   await game.save();
 }
 
-export async function checkGame(gameNumber: string): Promise<boolean> {
-  return (await Game.findOne({ gameNumber: gameNumber })) !== null;
+export async function getGame(gameNumber: string) {
+  return await Game.findOne({ gameNumber: gameNumber });
 }
 
-export default { createGame, checkGame };
+export async function checkGame(gameNumber: string): Promise<boolean> {
+  return (await getGame(gameNumber)) !== null;
+}
+
+export default { createGame, getGame, checkGame };

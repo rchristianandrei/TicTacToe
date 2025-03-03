@@ -4,6 +4,7 @@ import { authGuard } from "../middlewares/authGuard";
 import lobbyRepo from "../repo/lobbyRepo";
 import gameRepo from "../repo/gameRepo";
 import { users } from "../ws";
+import userRepo from "../repo/userRepo";
 
 export const ROUTE = "/api/game";
 export const router = Router();
@@ -61,6 +62,55 @@ router.post("/start", authGuard(), async (req, res) => {
       .status(500)
       .send({ message: "Something went wrong, please try again later" });
     return;
+  }
+});
+
+router.get("/:gameNumber", authGuard(), async (req, res) => {
+  const userId = (req.user as any).id.toString();
+  const gameNumber = req.params.gameNumber;
+
+  if (!gameNumber) {
+    res.status(400).send({ message: "Game Number is undefined" });
+    return;
+  }
+
+  try {
+    const game = await gameRepo.getGame(gameNumber);
+
+    if (!game) {
+      res.status(404).send({ message: "Game not found" });
+      return;
+    }
+
+    if (
+      game.owner.toString() !== userId &&
+      game.challenger.toString() !== userId
+    ) {
+      res.sendStatus(401);
+      return;
+    }
+
+    const enemy = await userRepo.findUserById(
+      game.owner.toString() === userId
+        ? game.challenger.toString()
+        : game.owner.toString()
+    );
+    if (!enemy) {
+      res.status(400).send({ message: "Enemy not found" });
+      return;
+    }
+
+    res.status(200).send({
+      enemyName: enemy.displayName,
+      yourTurn: game.turn === userId,
+      round: game.round,
+      data: game.matrix,
+    });
+  } catch (e) {
+    console.log(e);
+    res
+      .status(500)
+      .send({ message: "Something went wrong please try again later" });
   }
 });
 
