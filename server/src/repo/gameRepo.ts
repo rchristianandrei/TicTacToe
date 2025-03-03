@@ -17,12 +17,14 @@ export async function createGame(
   await game.save();
 }
 
-export async function getGame(gameNumber: string) {
-  return await Game.findOne({ gameNumber: gameNumber });
+export async function getGame(userId: string) {
+  return await Game.findOne({
+    $or: [{ owner: userId }, { challenger: userId }],
+  });
 }
 
 export async function checkGame(gameNumber: string): Promise<boolean> {
-  return (await getGame(gameNumber)) !== null;
+  return (await Game.findOne({ gameNumber: gameNumber })) !== null;
 }
 
 export default { createGame, getGame, checkGame };

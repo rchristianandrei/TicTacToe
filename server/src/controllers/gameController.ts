@@ -65,17 +65,11 @@ router.post("/start", authGuard(), async (req, res) => {
   }
 });
 
-router.get("/:gameNumber", authGuard(), async (req, res) => {
+router.get("/", authGuard(), async (req, res) => {
   const userId = (req.user as any).id.toString();
-  const gameNumber = req.params.gameNumber;
-
-  if (!gameNumber) {
-    res.status(400).send({ message: "Game Number is undefined" });
-    return;
-  }
 
   try {
-    const game = await gameRepo.getGame(gameNumber);
+    const game = await gameRepo.getGame(userId);
 
     if (!game) {
       res.status(404).send({ message: "Game not found" });
@@ -102,7 +96,7 @@ router.get("/:gameNumber", authGuard(), async (req, res) => {
 
     res.status(200).send({
       enemyName: enemy.displayName,
-      yourTurn: game.turn === userId,
+      yourTurn: game.turn.toString() === userId,
       round: game.round,
       data: game.matrix,
     });
