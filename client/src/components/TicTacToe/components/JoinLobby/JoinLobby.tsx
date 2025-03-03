@@ -21,6 +21,9 @@ export default function JoinLobby(){
                 setOpponent("None")
                 setErrorMessage("Lobby Closed")
             }
+            else if(data.type === "game start"){
+                navigate("/game")
+            }
         }
 
         onJoinLobby(true)

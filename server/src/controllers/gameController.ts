@@ -3,6 +3,7 @@ import { authGuard } from "../middlewares/authGuard";
 
 import lobbyRepo from "../repo/lobbyRepo";
 import gameRepo from "../repo/gameRepo";
+import { users } from "../ws";
 
 export const ROUTE = "/api/game";
 export const router = Router();
@@ -49,6 +50,9 @@ router.post("/start", authGuard(), async (req, res) => {
       lobby.challenger.toString(),
       lobby.roomNumber
     );
+
+    const challenger = users.get(lobby.challenger.toString());
+    challenger?.send(JSON.stringify({ type: "game start" }));
 
     res.status(200).send({ message: "Successfully created the game" });
   } catch (e) {
