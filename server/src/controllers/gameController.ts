@@ -5,6 +5,7 @@ import lobbyRepo from "../repo/lobbyRepo";
 import gameRepo from "../repo/gameRepo";
 import { users } from "../ws";
 import userRepo from "../repo/userRepo";
+import { checkIfPlayerWon } from "../services/winningConditionService";
 
 export const ROUTE = "/api/game";
 export const router = Router();
@@ -147,6 +148,17 @@ router.patch("/", authGuard(), async (req, res) => {
       res.status(400).send({ message: "Not yet your turn" });
       return;
     }
+
+    // Assign new move
+    game.matrix[index] = userId;
+
+    const won = checkIfPlayerWon(
+      userId,
+      index,
+      game.matrix.map((v) => (v ? v.toString() : ""))
+    );
+
+    console.log(won);
 
     await gameRepo.updateGame(game.id, userId, index);
 
