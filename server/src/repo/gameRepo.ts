@@ -48,4 +48,8 @@ export async function updateGame(
   await game.save();
 }
 
-export default { createGame, getGame, checkGame, updateGame };
+export async function deleteGame(gameNumber: string) {
+  await Game.deleteOne({ gameNumber: gameNumber });
+}
+
+export default { createGame, getGame, checkGame, updateGame, deleteGame };
