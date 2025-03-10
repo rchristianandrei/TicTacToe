@@ -2,8 +2,8 @@ export function checkIfPlayerWon(
   playerId: string,
   latestMove: number,
   matrix: string[]
-): number[][] {
-  const winnings: number[][] = [];
+): string[] {
+  const winnings: string[] = [];
 
   const vertical = checkVertical(playerId, latestMove, matrix);
   if (vertical) winnings.push(vertical);
@@ -24,8 +24,8 @@ function checkVertical(
   playerId: string,
   latestMove: number,
   matrix: string[]
-): number[] | null {
-  const numbers = [];
+): string | null {
+  let numbers = "";
 
   // Get the starting index
   let index = latestMove;
@@ -38,7 +38,7 @@ function checkVertical(
       return null;
     }
 
-    numbers.push(i);
+    numbers += i;
   }
 
   return numbers;
@@ -48,8 +48,8 @@ function checkHorizontal(
   playerId: string,
   latestMove: number,
   matrix: string[]
-): number[] | null {
-  const numbers = [];
+): string | null {
+  let numbers = "";
 
   const column = Math.floor(latestMove / 3);
 
@@ -64,7 +64,7 @@ function checkHorizontal(
       return null;
     }
 
-    numbers.push(i);
+    numbers += i;
   }
 
   return numbers;
@@ -75,12 +75,12 @@ function checkSlash(
   latestMove: number,
   matrix: string[],
   isForward: boolean
-): number[] | null {
+): string | null {
   const acceptable = isForward ? [2, 4, 6] : [0, 4, 8];
 
   if (!acceptable.includes(latestMove)) return null;
 
-  const numbers = [];
+  let numbers = "";
 
   for (let i = 0; i < acceptable.length; i++) {
     const index = acceptable[i];
@@ -88,7 +88,7 @@ function checkSlash(
       return null;
     }
 
-    numbers.push(index);
+    numbers += index;
   }
 
   return numbers;

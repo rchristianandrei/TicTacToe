@@ -97,7 +97,7 @@ router.get("/", authGuard(), async (req, res) => {
 
     const data = game.matrix.map((v) => {
       if (v) {
-        return v.toString() === game.owner._id.toString() ? "X" : "O";
+        return v.toString() === game.owner.toString() ? "X" : "O";
       } else {
         return null;
       }
@@ -158,9 +158,12 @@ router.patch("/", authGuard(), async (req, res) => {
       game.matrix.map((v) => (v ? v.toString() : ""))
     );
 
-    console.log(won);
+    if (won.length > 0) {
+      game.winner = userId;
+      game.winningCombo = won;
+    }
 
-    await gameRepo.updateGame(game.id, userId, index);
+    await gameRepo.updateGame(game);
 
     users
       .get(game.owner.toString())

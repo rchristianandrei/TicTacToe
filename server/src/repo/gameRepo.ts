@@ -1,4 +1,4 @@
-import { Game } from "../database/game";
+import { Game, GameInterface } from "../database/game";
 import { User } from "../database/user";
 
 export async function createGame(
@@ -28,22 +28,13 @@ export async function checkGame(gameNumber: string): Promise<boolean> {
   return (await Game.findOne({ gameNumber: gameNumber })) !== null;
 }
 
-export async function updateGame(
-  gameId: string,
-  currentTurnId: string,
-  index: number
-) {
-  const game = await Game.findById(gameId);
-  if (!game) throw Error("Game not found");
-
-  const currentPlayer = await User.findById(currentTurnId);
-  if (!currentPlayer) throw Error("Game not found");
+export async function updateGame(gameInterface: GameInterface) {
+  const game = new Game(gameInterface);
 
   game.turn =
-    game.turn.toString() === game.owner._id.toString()
+    game.turn.toString() === game.owner.toString()
       ? game.challenger
       : game.owner;
-  game.matrix[index] = currentPlayer.id;
 
   await game.save();
 }
