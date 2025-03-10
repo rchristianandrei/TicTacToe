@@ -1,6 +1,12 @@
 import mongoose, { Schema } from "mongoose";
 
-const LobbiesSchema = new mongoose.Schema({
+export interface LobbyInterface {
+  roomNumber: string;
+  owner: Schema.Types.ObjectId;
+  challenger: Schema.Types.ObjectId;
+}
+
+const LobbiesSchema = new mongoose.Schema<LobbyInterface>({
   roomNumber: { type: String, required: true, unique: true },
   owner: { type: Schema.Types.ObjectId, required: true },
   challenger: { type: Schema.Types.ObjectId },
