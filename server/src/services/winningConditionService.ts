@@ -28,10 +28,7 @@ function checkVertical(
   let numbers = "";
 
   // Get the starting index
-  let index = latestMove;
-  while (index - 3 >= 0) {
-    index -= 3;
-  }
+  let index = latestMove % 3;
 
   for (let i = index; i < matrix.length; i += 3) {
     if (matrix[i] !== playerId) {

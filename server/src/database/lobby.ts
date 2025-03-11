@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 export interface LobbyInterface {
   roomNumber: string;
   owner: Schema.Types.ObjectId;
-  challenger: Schema.Types.ObjectId;
+  challenger: Schema.Types.ObjectId | null;
 }
 
 const LobbiesSchema = new mongoose.Schema<LobbyInterface>({
