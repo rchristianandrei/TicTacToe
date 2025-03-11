@@ -104,10 +104,14 @@ router.get("/", authGuard(), async (req, res) => {
     });
 
     res.status(200).send({
+      roomNumber: game.gameNumber,
       enemyName: enemy.displayName,
       yourTurn: game.turn.toString() === userId,
       round: game.round,
       data: data,
+      gameOver: game.winner !== undefined,
+      youWin: game.winner ? userId === game.winner.toString() : false,
+      winningCombo: game.winningCombo,
     });
   } catch (e) {
     console.log(e);
